@@ -19,7 +19,7 @@ const board = []; // array of rows, each row is array of cells  (board[y][x])
 
 function makeBoard() {
   // set "board" to empty HEIGHT x WIDTH matrix array
-  for (let i = 0;i < HEIGHT;i++) {
+  for (let y = 0; y < HEIGHT; y++) {
     board.push(Array(WIDTH).fill(null));
   }
   return board;
@@ -44,9 +44,9 @@ function makeHtmlBoard() {
   }
   htmlBoard.append(top);
 
-/* dynamically creates the main part of html board
-  uses HEIGHT to create table rows
-  uses WIDTH to create table cells for each row */ 
+  /* dynamically creates the main part of html board
+    uses HEIGHT to create table rows
+    uses WIDTH to create table cells for each row */
   for (let y = 0; y < HEIGHT; y++) {
     let row = document.createElement('tr');
 
@@ -65,7 +65,7 @@ function findSpotForCol(x) {
   // loop through board array starting from bottom up
   //find the first null value and return y value
 
-  for (let y = board.length -1; y >= 0; y--) {
+  for (let y = HEIGHT - 1; y >= 0; y--) {
     if (board[y][x] === null) {
       return y;
     }
@@ -76,11 +76,11 @@ function findSpotForCol(x) {
 /** placeInTable: update DOM to place piece into HTML table of board */
 
 function placeInTable(y, x) {
-  // TODO: make a div and insert into correct table cell
   let piece = document.createElement('div');
   piece.classList.add('piece');
-  (currPlayer === 1) ? piece.classList.add('p1') : piece.classList.add('p2');
-  let id = `${y}-${x}`;
+  // piece.classList.add((currPlayer === 1) ? 'p1' : 'p2'))
+  piece.classList.add((currPlayer === 1) ? 'p1' : 'p2');
+  const id = `${y}-${x}`;
   let cell = document.getElementById(id);
   cell.append(piece);
 }
@@ -88,7 +88,13 @@ function placeInTable(y, x) {
 /** endGame: announce game end */
 
 function endGame(msg) {
-  alert('The game is a tie!');
+  alert(msg);
+}
+
+// check for tie
+// check if all cells in board are filled; if so call, call endGame
+function checkForTie() {
+  return board.every(row => row.every(cell => cell !== null));
 }
 
 /** handleClick: handle click of column top to play piece */
@@ -113,12 +119,9 @@ function handleClick(evt) {
     return endGame(`Player ${currPlayer} won!`);
   }
 
-  // check for tie
-  // check if all cells in board are filled; if so call, call endGame
-  if ( board.every(arr => arr.every (elem => elem !== null))) {
-    endGame();
+  if (checkForTie()) {
+    return endGame('The game is a tie :(')
   }
-
 
   // switch players
   currPlayer = (currPlayer === 1) ? 2 : 1;
@@ -134,20 +137,23 @@ function checkForWin() {
    */
   function _win(cells) {
 
-    //TODO: Check four cells to see if they're all legal & all color of current
+    //Check four cells to see if they're all legal & all color of current
     //player
+    return cells.every(([row, col]) =>
+      (0 <= row && row < HEIGHT) && (0 <= col && col < WIDTH)
+      && (board[row][col] === currPlayer));
 
   }
 
-  // using HEIGHT and WIDTH, generate "check list" of coordinates
-  // for 4 cells (starting here) for each of the different
-  // ways to win: horizontal, vertical, diagonalDR, diagonalDL
+  /** using HEIGHT and WIDTH, generate "check list" of coordinates
+   for 4 cells (starting here) for each of the different
+   ways to win: horizontal, vertical, diagonalDR, diagonalDL*/
   for (let y = 0; y < HEIGHT; y++) {
     for (let x = 0; x < WIDTH; x++) {
-      // TODO: assign values to the below variables for each of the ways to win
-      // horizontal has been assigned for you
-      // each should be an array of 4 cell coordinates:
-      // [ [y, x], [y, x], [y, x], [y, x] ]
+      /* assign values to the below variables for each of the ways to win
+      horizontal has been assigned for you
+      each should be an array of 4 cell coordinates:
+      [ [y, x], [y, x], [y, x], [y, x] ] */
 
       let horiz = [[y, x], [y, x + 1], [y, x + 2], [y, x + 3]];
       let vert = [[y, x], [y + 1, x], [y + 2, x], [y + 3, x]];
