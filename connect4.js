@@ -29,7 +29,6 @@ function makeBoard() {
 
 function makeHtmlBoard() {
   const htmlBoard = document.getElementById('board');
-  console.log('HTML board creation ran')
 
   // create a top row, add id to it, add click event listener to it
   const top = document.createElement("tr");
@@ -93,8 +92,8 @@ function endGame(msg) {
 
 // check for tie
 // check if all cells in board are filled; if so call, call endGame
-function checkForTie() {
-  return board.every(row => row.every(cell => cell !== null));
+function checkForTie(boardCheck) {
+  return boardCheck.every(row => row.every(cell => cell !== null));
 }
 
 /** handleClick: handle click of column top to play piece */
@@ -115,11 +114,11 @@ function handleClick(evt) {
   board[y][x] = currPlayer;
 
   // check for win
-  if (checkForWin()) {
+  if (checkForWin(board)) {
     return endGame(`Player ${currPlayer} won!`);
   }
 
-  if (checkForTie()) {
+  if (checkForTie(board)) {
     return endGame('The game is a tie :(')
   }
 
@@ -127,23 +126,24 @@ function handleClick(evt) {
   currPlayer = (currPlayer === 1) ? 2 : 1;
 }
 
+/** _win:
+ * takes input array of 4 cell coordinates [ [y, x], [y, x], [y, x], [y, x] ]
+ * returns true if all are legal coordinates for a cell & all cells match
+ * currPlayer
+ */
+function _win(boardToCheck, cells) {
+
+  //Check four cells to see if they're all legal & all color of current
+  //player
+  return cells.every(([y, x]) =>
+    (0 <= y && y < HEIGHT) && (0 <= x && x < WIDTH)
+    && (boardToCheck[y][x] === currPlayer));
+
+}
+
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
 
-function checkForWin() {
-  /** _win:
-   * takes input array of 4 cell coordinates [ [y, x], [y, x], [y, x], [y, x] ]
-   * returns true if all are legal coordinates for a cell & all cells match
-   * currPlayer
-   */
-  function _win(cells) {
-
-    //Check four cells to see if they're all legal & all color of current
-    //player
-    return cells.every(([y, x]) =>
-      (0 <= y && y < HEIGHT) && (0 <= x && x < WIDTH)
-      && (board[y][x] === currPlayer));
-
-  }
+function checkForWin(boardToCheck) {
 
   /** using HEIGHT and WIDTH, generate "check list" of coordinates
    for 4 cells (starting here) for each of the different
@@ -161,11 +161,12 @@ function checkForWin() {
       const diagDR = [[y, x], [y + 1, x + 1], [y + 2, x + 2], [y + 3, x + 3]];
 
       // find winner (only checking each win-possibility as needed)
-      if (_win(horiz) || _win(vert) || _win(diagDR) || _win(diagDL)) {
+      if (_win(boardToCheck, horiz) || _win(boardToCheck, vert) || _win(boardToCheck, diagDR) || _win(boardToCheck, diagDL)) {
         return true;
       }
     }
   }
+  return false;
 }
 
 makeBoard();
