@@ -39,7 +39,10 @@ function makeHtmlBoard() {
   // create cells for top row, set numbered id, append to top row, append top to board
   for (let x = 0; x < WIDTH; x++) {
     const headCell = document.createElement("td");
+    const hoverDiv = document.createElement('div');
     headCell.setAttribute("id", x);
+    hoverDiv.classList.add('hidden-piece');
+    headCell.append(hoverDiv);
     top.append(headCell);
   }
   htmlBoard.append(top);
@@ -78,7 +81,6 @@ function findSpotForCol(x) {
 function placeInTable(y, x) {
   const piece = document.createElement('div');
   piece.classList.add('piece');
-  // piece.classList.add((currPlayer === 1) ? 'p1' : 'p2'))
   piece.classList.add((currPlayer === 1) ? 'p1' : 'p2');
   const id = `${y}-${x}`;
   const cell = document.getElementById(id);
@@ -100,8 +102,17 @@ function checkForTie(boardCheck) {
 /** handleClick: handle click of column top to play piece */
 
 function handleClick(evt) {
-  // get x from ID of clicked cell
-  const x = +evt.target.id;
+  // get x from ID of clicked target. If the target was a 
+  //div within the cell, get the id of the parent (cell)
+  let x = null;
+  if (evt.target.tagName === 'DIV') {
+    x = +evt.target.parentElement.id;
+  }
+  else {
+    x = +evt.target.id;
+  }
+
+  // let x = +evt.target.id;
 
   // get next spot in column (if none, ignore click)
   const y = findSpotForCol(x);
@@ -114,7 +125,6 @@ function handleClick(evt) {
   // add line to update in-memory board
   board[y][x] = currPlayer;
   mostRecentPlay = [y, x];
-  console.log('most recent play', mostRecentPlay);
 
   // check for win
   if (checkForWin(board)) {
@@ -127,6 +137,14 @@ function handleClick(evt) {
 
   // switch players
   currPlayer = (currPlayer === 1) ? 2 : 1;
+  changeHoverDisplay();
+}
+
+function changeHoverDisplay() {
+  const hiddenPieces = document.getElementsByClassName('hidden-piece');
+  for (let piece of hiddenPieces) {
+    piece.style.backgroundColor = (currPlayer === 1) ? 'red' : 'blue';
+  }
 }
 
 /** _win:

@@ -32,6 +32,16 @@
   border: dashed 1px lightgray;
 }
 
-#column-top td:hover {
-  background-color: gold;
+
+.hidden-piece {
+  background-color: red;
+  border-radius: 50%;
+  margin: 5px;
+  width: 80%;
+  height: 80%;
+  visibility: hidden;
+}
+
+td:hover .hidden-piece{
+  visibility: visible;
 }
