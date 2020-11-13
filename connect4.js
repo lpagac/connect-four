@@ -10,6 +10,7 @@
 const WIDTH = 7;
 const HEIGHT = 6;
 
+let mostRecentPlay = [];
 let currPlayer = 1; // active player: 1 or 2
 const board = []; // array of rows, each row is array of cells  (board[y][x])
 
@@ -112,6 +113,8 @@ function handleClick(evt) {
   placeInTable(y, x);
   // add line to update in-memory board
   board[y][x] = currPlayer;
+  mostRecentPlay = [y, x];
+  console.log('most recent play', mostRecentPlay);
 
   // check for win
   if (checkForWin(board)) {
@@ -171,3 +174,28 @@ function checkForWin(boardToCheck) {
 
 makeBoard();
 makeHtmlBoard();
+
+
+
+/* Create an event listener on the redo button. 
+When redo button is clicket, reset value in array and remove div from cell
+*/ 
+const button = document.getElementById('Redo');
+button.addEventListener( 'click', function(evt) {
+  undoBoard();
+  undoBoardDisplay();
+  currPlayer = (currPlayer === 1) ? 2 : 1;
+});
+
+/* Reset JS gameboard*/ 
+function undoBoard() {
+  let [y, x] = mostRecentPlay;
+  board[y][x] = null;
+}
+
+/* Remove div from cell */ 
+function undoBoardDisplay() {
+  const cellToResetID = `${mostRecentPlay[0]}-${mostRecentPlay[1]}`;
+  const cellToReset = document.getElementById(cellToResetID);
+  cellToReset.innerHTML = '';
+}

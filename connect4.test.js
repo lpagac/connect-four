@@ -48,3 +48,8 @@ it('should fill a cell after clicking', function() {
     expect(cellToCheck.children.length).toBe(1);
 });
 
+it('should alert when a player has won', function() {
+    spyOn(window, 'alert');
+    endGame('Player 1 won!');
+    expect(window.alert).toHaveBeenCalledWith(`Player 1 won!`);
+});
