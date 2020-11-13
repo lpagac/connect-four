@@ -14,6 +14,7 @@
   margin: 5px;
   width: 80%;
   height: 80%;
+  z-index: 2;
 }
 
 /* TODO: make pieces red/blue,  depending on player 1/2 piece */
@@ -42,6 +43,17 @@
   visibility: hidden;
 }
 
+@keyframes slidein {
+  from {
+    transform: translateY(0px);
+  }
+  to {
+    transform: translateY(350px);
+  }
+}
+
 td:hover .hidden-piece{
   visibility: visible;
+  animation-name: slidein;
+  animation-duration: 1s;
 }

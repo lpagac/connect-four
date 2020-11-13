@@ -78,10 +78,7 @@ function findSpotForCol(x) {
 
 /** placeInTable: update DOM to place piece into HTML table of board */
 
-function placeInTable(y, x) {
-  const piece = document.createElement('div');
-  piece.classList.add('piece');
-  piece.classList.add((currPlayer === 1) ? 'p1' : 'p2');
+function placeInTable(y, x, piece) {
   const id = `${y}-${x}`;
   const cell = document.getElementById(id);
   cell.append(piece);
@@ -99,6 +96,14 @@ function checkForTie(boardCheck) {
   return boardCheck.every(row => row.every(cell => cell !== null));
 }
 
+/** Create a piece div */
+function createPiece() {
+  const piece = document.createElement('div');
+  piece.classList.add('piece');
+  piece.classList.add((currPlayer === 1) ? 'p1' : 'p2');
+  return piece;
+}
+
 /** handleClick: handle click of column top to play piece */
 
 function handleClick(evt) {
@@ -112,7 +117,8 @@ function handleClick(evt) {
     x = +evt.target.id;
   }
 
-  // let x = +evt.target.id;
+  let piece = createPiece();
+
 
   // get next spot in column (if none, ignore click)
   const y = findSpotForCol(x);
@@ -121,7 +127,7 @@ function handleClick(evt) {
   }
 
   // place piece in board and add to HTML table
-  placeInTable(y, x);
+  placeInTable(y, x, piece);
   // add line to update in-memory board
   board[y][x] = currPlayer;
   mostRecentPlay = [y, x];
